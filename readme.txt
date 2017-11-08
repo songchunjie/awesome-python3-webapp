@@ -1,5 +1,4 @@
-Git is a distributed version control system.
-Git is a free software distributed under the GPL.
-Git has a mutable index called stage.
-New to learn Git.
-Creating a new branch is quick and simple.
+For Python , I am new.
+I am workinging hard on Python.
+This is a Simple Python project.
+This is a Blog WebSite inclding log,user and comment.
