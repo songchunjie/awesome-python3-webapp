@@ -7,6 +7,9 @@ import time
 import http.client 
 import csv
 import urllib
+import mysql.connector
+
+
 
 loop = 0
 
@@ -70,7 +73,7 @@ def get_listdata(html_txt,confername):      #获取会议动态列表内容
         for liobj in li:
             loop = loop + 1
             temp=[]
-            temp.append(loop)
+            temp.append("2017"+str(loop))
             temp.append(confername)
             date=liobj.find("span").string   
             temp.append(date)   
@@ -85,7 +88,7 @@ def get_listdata(html_txt,confername):      #获取会议动态列表内容
         for a in aa:
             loop = loop + 1
             temp=[]
-            temp.append(loop)
+            temp.append("2017"+str(loop))
             temp.append(confername)
             temp.append("2017")   
             temp.append(a['href']) 
@@ -165,6 +168,9 @@ def get_urlstr():
     return requrl
 
 if __name__=="__main__":
+    conn = mysql.connector.connect(user='root',password='password',database='test')
+    cursor = conn.cursor()
+    
     year = ['2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016','2017']
     mainurl = 'http://www.boaoforum.org/hyhdhdzl2017/index.jhtml'
     html=get_html(mainurl)
@@ -181,12 +187,16 @@ if __name__=="__main__":
         result = get_listdata(listhtml,i[1])
         write_data(result[0],"Conference.csv")
         for ll in result[0]:
+            cursor.execute('insert into conferencelist(id,name,datestr,url,title) values(%s,%s,%s,%s,%s)',[str(ll[0]),str(ll[1]),str(ll[2]),str(ll[3]),str(ll[4])])            
             primarykey = ll[0]
             contenturl = "http://www.boaoforum.org/" + ll[3]
             contenthtml = get_html(contenturl)
             contentresult = get_conferencedata(contenthtml,primarykey)
             write_data(contentresult,"Content.csv")
-           
+            for dd in contentresult:
+                cursor.execute('insert into conferencecontent(id,title,content) values(%s,%s,%s)',[str(dd[0]),str(dd[1]),str(dd[2])])
+            
+          
         alist = moreurl.split("/")
         print("================")
         print(alist)
@@ -198,13 +208,18 @@ if __name__=="__main__":
                 pagelistresult = get_listdata(pagelisthtml,i[1])
                 write_data(pagelistresult[0],"Conference.csv")
                 for ll in pagelistresult[0]:
+                    cursor.execute('insert into conferencelist(id,name,datestr,url,title) values(%s,%s,%s,%s,%s)',[str(ll[0]),str(ll[1]),str(ll[2]),str(ll[3]),str(ll[4])])
                     primarykey = ll[0]
                     contenturl = "http://www.boaoforum.org/" + ll[3]
                     contenthtml = get_html(contenturl)
                     contentresult = get_conferencedata(contenthtml,primarykey)
                     write_data(contentresult,"Content.csv")
+                    for dd in contentresult:
+                        cursor.execute('insert into conferencecontent(id,title,content) values(%s,%s,%s)',[str(dd[0]),str(dd[1]),str(dd[2])])
 
-            
+    conn.commit()
+    cursor.close()
+    conn.close()        
 
     
 ##    urllist=get_url()
