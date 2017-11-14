@@ -9,6 +9,6 @@ the purpose is internet worm "http://www.boaoforum.org/hyhdhdzl2017/index.jhtml"
 it is a Separate Module in this project.
 
 2017-11-14 update：
-write the list and the content to mysql database
+write the list and the content to mysql database.
 
 Updating...
